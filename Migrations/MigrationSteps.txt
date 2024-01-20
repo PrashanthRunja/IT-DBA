@@ -1,0 +1,121 @@
+##Check destination SQL box configuration to match the current SQL Server:
+P054ECASQLS06\SQLADMIN
+RAM: 16 GB
+CPU 4 cores
+Disks:
+C:\		61088	60 GB
+D:\		30590	30 GB
+E:\		990 
+E:\DS_DATA_01\	204670	200 GB
+E:\DS_LOGS_01\	102270  100 GB
+E:\DS_SYSTEMDB\	81790	80 GB
+E:\DS_TEMPDB\	103294 	100 GB
+F:\		20350	20 GB
+
+
+##Check services
+Machinename	ServiceName	DisplayName							ServiceState
+P054ECASQLS06	MsDtsServer140	SQL Server Integration Services 14.0				RUNNING 
+P054ECASQLS06	MSSQL$SQLADMIN	SQL Server (SQLADMIN)						RUNNING 
+P054ECASQLS06	SQLAgent$SQLADMIN	SQL Server Agent (SQLADMIN)				RUNNING 
+P054ECASQLS06	SQLBrowser	SQL Server Browser						RUNNING 
+P054ECASQLS06	SQLdmCollectionService$Default	SQLdm Collection Service (Default)		RUNNING 
+P054ECASQLS06	SQLdmManagementService$Default	SQLdm Management Service (Default)		RUNNING 
+P054ECASQLS06	SQLdmPredictiveAnalyticsService$Default	SQLdm Predictive Analytics Service (Default)	RUNNING 
+P054ECASQLS06	SQLdmRegistrationService$Default	SQLdm Rest Service (Default)		RUNNING 
+P054ECASQLS06	SQLServerReportingServices	SQL Server Reporting Services			RUNNING 
+P054ECASQLS06	SQLTELEMETRY$SQLADMIN	SQL Server CEIP service (SQLADMIN)			RUNNING 
+P054ECASQLS06	SQLWriter	SQL Server VSS Writer						RUNNING 
+P054ECASQLS06	SSISTELEMETRY140	SQL Server Integration Services CEIP service 14.0	RUNNING 
+
+##Secure Service account passwords and SQLDBA
+MSSQL$SQLADMIN ,			AMER\svc_P054ECASQLS06_s - n{#fd*-Gz0oK=-2As.N+
+SQLAgent$SQLADMIN,	 		AMER\svc_P054ECASQLS06_a - 8_5hLdkG5v8G_0a0Z54_95
+SQL Server Integration Services 15.0    NT Service\MsDtsServer140 
+SQLServerReportingServices 		AMER\svc_P054ECASQLS06_s - n{#fd*-Gz0oK=-2As.N+
+SQLDBA - obPblasY6&mM?4QQqnOBFb4x 	
+
+##FormatDisks
+MSSQL_Data_01
+MSSQL_Logs_01
+MSSQL_TempDB
+
+##Copy ServerBuild_V5.0.1 to destination from \\nas001.amer.epiqcorp.com\dba-team\Installers - Microsoft\SQL Server\PowerShell
+\\p054isifile089.epiqcorp.com\IT-DBA-Team\Installers - Microsoft\SQL Server\2019\Current Install
+CU -\\nas001.amer.epiqcorp.com\dba-team\Installers - Microsoft\SQL Server\2019\2.SP\RTM
+
+##Run the below script using powershell as Admin
+
+Set-ExecutionPolicy -ExecutionPolicy Bypass
+PS D:\SQLInstalls> .\sql_AutomatedInstall.ps1 -StandAloneInstall
+cmdlet sql_AutomatedInstall.ps1 at command pipeline position 1
+Supply values for the following parameters:
+(Type !? for Help.)
+
+InstanceName: FORLITST or MSSQLSERVER
+DefaultTCPPort: 8881
+InstallVersion: 2019
+SQLServiceAcct[0]: USCUST\SVG_062606s$
+SQLServiceAcct[1]: 
+SQLAgentServiceAcct[0]: USCUST\SVG_062606a$
+SQLAgentServiceAcct[1]: 
+SQLDBAPassWord: Prasad12345
+BusinessUnit: ECA
+ApplicationName: CLS
+Environment: PRODUCTION
+Location: LVDC
+Prefix: FORLITST or MSSQL
+
+--New Scripts
+InstanceName: MSSQLSERVER
+DefaultTCPPort: 1433
+InstallVersion: 2019
+SQLServiceAcct[0]: AMER\SVG_PECA6s1$
+SQLServiceAcct[1]: 
+SQLAgentServiceAcct[0]: AMER\SVG_PECA6a2$
+SQLAgentServiceAcct[1]: 
+SQLDBAPassWord: obPblasY6&mM?4QQqnOBFb4x
+Prefix: MSSQL
+MountpointPath:E:
+BinaryLocation:D:
+
+##Add SQL service, SQL Agent and Cohesity agent accounts as Local admins.
+
+##Send RITM to Dirsvc to add the SQL servive and Agent accounts to Local security policy on  destination server.  For ex - RITM0272793
+⦁    Act as part of the Operating Systems
+⦁    Lock Pages in Memory
+⦁    Perform Volume Maintenance Task
+⦁    Impersonate a client after Authentication
+
+
+RITM0272793 - Adding Polciies ticket  
+
+Reporting services:
+Servername:P054ECASQLS06\SSRS
+Account:AMER\svc_P054ECASQLS06_s
+
+SSIS Catalog pass: !zU*PfgKPyb$h[$W
+
+ServerObjects:
+Account name - amer\svc_SQLInventory
+Pass: ^xdB-8yzP-CY6nb%
+
+##Craete a ticket to DirSvcsTeam (RITM0272793 for example)
+Please add the below accounts to Local security policy on  serve P054ECASQLS6.
+AMER\svc_P054ECASQLS06_s
+AMER\svc_P054ECASQLS06_a
+
+##Update SAM table.##Update CMS
+
+##Migrate database , Logins, Jobs and Linked servers on new server.
+
+##Create Peer review task to Engineering team DBSvcsMSSQLEngineeringTeam (TASK0595958 for example) on the same RITM request.
+
+##Upload Peer review document to share point.
+
+ 
+
+
+⁠
+
+

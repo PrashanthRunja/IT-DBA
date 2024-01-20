@@ -1,0 +1,19 @@
+DECLARE @DB_Name varchar(100) 
+DECLARE @Command nvarchar(200) 
+DECLARE database_cursor CURSOR FOR 
+SELECT name 
+FROM MASTER.sys.databases where name not in ('Tempdb') and state_desc ='ONLINE' and is_read_only=0 order by name
+
+OPEN database_cursor
+FETCH NEXT FROM database_cursor INTO @DB_Name
+WHILE @@FETCH_STATUS = 0 
+BEGIN 
+     SELECT @Command = 'DBCC CheckDB ([' + @DB_Name + ']) WITH NO_INFOMSGS,  ALL_ERRORMSGS
+GO'
+print @Command
+     --EXEC sp_executesql @Command
+     FETCH NEXT FROM database_cursor INTO @DB_Name 
+END
+
+CLOSE database_cursor 
+DEALLOCATE database_cursor

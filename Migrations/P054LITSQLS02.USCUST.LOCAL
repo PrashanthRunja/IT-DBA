@@ -1,0 +1,68 @@
+Source:P054FLTSQLS02.uscust.local\FORLITST
+Destination:P054LITSQLS02.USCUST.LOCAL\FORLITST
+
+Config Source:
+CPU -2 Cores,4 processors
+Memory - 8 Gb
+Disks:
+C:\	173727 170GB
+D:\	20350  20GB
+L:\	131965 130GB
+M:\	1048446 1TB
+N:\	2097151 2TB
+T:\	153469 150GB
+
+Config Dest:
+CPU -2 Cores,4 processors
+Memory - 32 Gb
+Disks:
+C:\	173727 170GB
+D:\	20350  20GB
+L:\	131965 130GB
+M:\	1048446 1TB
+N:\	2097151 2TB
+T:\	153469 150GB
+
+##Check services
+P054FLTSQLS02	MSSQL$FORLITST	SQL Server (FORLITST)						RUNNING
+P054FLTSQLS02	MSSQLFDLauncher$FORLITST	SQL Full-text Filter Daemon Launcher (FORLITST)	RUNNING
+P054FLTSQLS02	SQLAgent$FORLITST	SQL Server Agent (FORLITST)				RUNNING
+P054FLTSQLS02	SQLBrowser	SQL Server Browser						RUNNING
+P054FLTSQLS02	SQLTELEMETRY$FORLITST	SQL Server CEIP service (FORLITST)			RUNNING
+P054FLTSQLS02	SQLWriter	SQL Server VSS Writer						RUNNING
+
+
+##Secure Service account passwords and SQLDBA
+MSSQL$SQLADMIN ,			USCUST\SVCM_P054LITSQLS02s$ 
+SQLAgent$SQLADMIN,	 		USCUST\SVCM_P054LITSQLS02a$
+SQLDBA - B\;S0ju0ZQPnqs~aL2ga$h^l 
+
+
+FORLITST_Data_01
+FORLITST_Logs_01
+FORLITST_TEMPDB
+
+Username:  USCUST\SVG_P054LITSQLSs$
+sAMAccountName: USCUST\SVG_062606s$
+
+Username:  USCUST\SVG_P054LITSQLSa$
+sAMAccountName: USCUST\SVG_062606a$
+
+
+PS D:\SQLInstalls> .\sql_AutomatedInstall.ps1 -StandAloneInstall
+cmdlet sql_AutomatedInstall.ps1 at command pipeline position 1
+Supply values for the following parameters:
+(Type !? for Help.)
+InstanceName: FORLITST
+DefaultTCPPort: 8881
+InstallVersion: 2019
+SQLServiceAcct[0]: USCUST\SVG_062606s$
+SQLServiceAcct[1]: 
+SQLAgentServiceAcct[0]: USCUST\SVG_062606a$
+SQLAgentServiceAcct[1]: 
+SQLDBAPassWord: Prasad12345
+BusinessUnit: ECA
+ApplicationName: CLS
+Environment: PRODUCTION
+Location: LVDC
+Prefix: FORLITST

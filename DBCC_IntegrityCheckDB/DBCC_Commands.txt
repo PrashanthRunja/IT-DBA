@@ -1,0 +1,110 @@
+--Make sure each Integrity job has two steps on all the servers
+use msdb
+SELECT 
+  sj.name JobName
+, sjs.step_id
+, sjs.step_name
+,sjs.command
+FROM dbo.sysjobs sj
+  LEFT OUTER JOIN dbo.sysjobsteps sjs ON sj.job_id = sjs.job_id
+  LEFT OUTER JOIN dbo.sysjobstepslogs sjsl ON sjs.step_uid = sjsl.step_uid
+WHERE sj.name like 'DatabaseIntegrityCheck - USER_DATABASES%' and sj.name not in  ('DatabaseIntegrityCheck - USER_DATABASES - DailyAlertCheck')
+
+--Make sure all the servers have the Parameters in Maint table -DBASupport 
+ SELECT @@SERVERNAME,[Param_ID]
+      ,[Param_Job]
+      ,[Param_Name]
+      ,[Param_Type]
+      ,[Param_Value]
+  FROM [DBASupport].[dbo].[MaintParameter]
+  where Param_Job like 'DatabaseIntegrityCheck - USER_DATABASES%' and Param_Job not in ('DatabaseIntegrityCheck - SYSTEM_DATABASES')
+ and (Param_Name='@PhysicalOnly' )
+ --and Param_Name='@Delim'
+ order by @@SERVERNAME,Param_Job
+  
+
+--begin tran
+--update [DBASupport].[dbo].[MaintParameter]
+--set Param_Value=','
+--where Param_Job like 'DatabaseIntegrityCheck - USER_DATABASES%' and Param_Job not in ('DatabaseIntegrityCheck - SYSTEM_DATABASES')
+--and Param_Name='@Delim'
+
+--commit
+--rollback
+
+--CommandLog
+SELECT TOP (10) @@servername,[ID]
+      ,[DatabaseName]
+      ,[Command]
+      ,[CommandType]
+      ,[StartTime]
+      ,[EndTime]
+	  ,CAST(([EndTime]-[StartTime]) as time(0)) 'Duration [hh:mm:ss]'
+      ,[ErrorNumber]
+      ,[ErrorMessage]
+  FROM [master].[dbo].[CommandLog]
+  where CommandType='DBCC_CHECKDB'
+  and [DatabaseName] not in ('MASTER','MODEL','MSDB') 
+  order by StartTime desc
+  
+  
+  --Check the Schedules and set all to same. 
+  -- Make sure script execution is successful.
+  ---Check All three jobs have output file and same schedules.
+  --Check parameters for (PhysicalOnly,Days,Delim)have been added and consistent for all by running the below command for three Jobs each.  
+
+ 
+ 1.DECLARE @DaysBetween TINYINT = 14 If this is not 14 days: update the job not table(Ignore for Expres edition) 
+ 2.Check @demim, this should be ','
+ 3. Fix the Output log file
+ $(ESCAPE_SQUOTE(SQLLOGDIR))\DatabaseIntegrityCheck_USER_DATABASES_$(ESCAPE_SQUOTE(JOBID))_$(ESCAPE_SQUOTE(STEPID))_$(ESCAPE_SQUOTE(STRTDT))_$(ESCAPE_SQUOTE(STRTTM)).txt
+ 
+--Char length 
+use DBASupport
+--DECLARE @CMD VARCHAR (8000)
+DECLARE @CMD NVARCHAR (MAX)
+
+--PreStuff Variable
+--SET @CMD = 'sqlcmd -E -S ' + @@SERVERNAME + ' -d dbasupport -Q "EXECUTE [dbasupport].[dbo].[DatabaseIntegrityCheck_Builder] '
+SET @CMD = 'EXECUTE [dbasupport].[dbo].[DatabaseIntegrityCheck_Builder] '
+
+-- Pull Parameters together
+SELECT @CMD = COALESCE( @CMD + Param_Name + ' = ' + 
+                            CASE Param_Type 
+							    WHEN 'C' 
+								    THEN  '''' + Param_Value + ''''
+								ELSE 
+								    Param_Value
+						    END
+							+ ',' , ''  ) 
+  FROM MaintParameter
+ WHERE Param_Job = 'DatabaseIntegrityCheck - USER_DATABASES'
+ 
+--SELECT @Cmd =  LEFT (@Cmd, LEN(@CMD)-1) + '" -b'
+SELECT @Cmd =  LEFT (@Cmd, LEN(@CMD)-1)
+
+-- Change 'NULL' to NULL
+SELECT @CMD = REPLACE(@CMD, '''NULL''', 'NULL')
+
+--PRINT @CMD
+
+--EXECUTE XP_CMDSHELL @CMD
+EXECUTE (@CMD)
+
+
+
+
+P082RL1GSQL00.cacust.local\EDDS
+
+Job 'DatabaseIntegrityCheck - USER_DATABASES Pickup' : Step 2, 'DatabaseIntegrityCheck - USER_DATABASES Pickup' : Began Executing 2023-08-19 09:00:02
+
+output                                                                                                                                                                                                                                                         
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Msg 105, Level 15, State 1, Server P082RL1GSQL00\EDDS, Line 1
+Unclosed quotation mark after the character string ''.
+Msg 102, Level 15, State 1, Server P082RL1GSQL00\EDDS, Line 1
+Incorrect syntax near ''.
+(null)
+
+(5 rows(s) affected)
+

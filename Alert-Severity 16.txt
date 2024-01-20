@@ -1,0 +1,12 @@
+USE [msdb]
+GO
+
+/****** Object:  Alert [Severity 016]    Script Date: 09/11/2023 09:55:34 ******/
+EXEC msdb.dbo.sp_add_alert @name=N'Severity 016', 
+		@message_id=0, 
+		@severity=16, 
+		@enabled=1, 
+		@delay_between_responses=60, 
+		@include_event_description_in=1, 
+		@category_name=N'[Uncategorized]'
+GO

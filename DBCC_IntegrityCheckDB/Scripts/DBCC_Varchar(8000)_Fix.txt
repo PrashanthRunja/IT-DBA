@@ -1,0 +1,30 @@
+use DBASupport
+--DECLARE @CMD VARCHAR (8000)
+DECLARE @CMD NVARCHAR (MAX)
+
+--PreStuff Variable
+--SET @CMD = 'sqlcmd -E -S ' + @@SERVERNAME + ' -d dbasupport -Q "EXECUTE [dbasupport].[dbo].[DatabaseIntegrityCheck_Builder] '
+SET @CMD = 'EXECUTE [dbasupport].[dbo].[DatabaseIntegrityCheck_Builder] '
+
+-- Pull Parameters together
+SELECT @CMD = COALESCE( @CMD + Param_Name + ' = ' + 
+                            CASE Param_Type 
+                                                    WHEN 'C' 
+                                                           THEN  '''' + Param_Value + ''''
+                                                       ELSE 
+                                                           Param_Value
+                                             END
+                                                + ',' , ''  ) 
+  FROM MaintParameter
+WHERE Param_Job = 'DatabaseIntegrityCheck - USER_DATABASES Pickup'
+
+--SELECT @Cmd =  LEFT (@Cmd, LEN(@CMD)-1) + '" -b'
+SELECT @Cmd =  LEFT (@Cmd, LEN(@CMD)-1)
+
+-- Change 'NULL' to NULL
+SELECT @CMD = REPLACE(@CMD, '''NULL''', 'NULL')
+
+--PRINT @CMD
+
+--EXECUTE XP_CMDSHELL @CMD
+EXECUTE (@CMD)

@@ -1,0 +1,36 @@
+
+------------------------------------------------------------------
+use SQLSentry
+Select IsPerformanceMonitorDisabled, * from device
+Where  
+--HostName = 'P054D11LAWSQL01.DM11.LOCAL'
+IsPerformanceMonitorDisabled = 1
+
+ 
+
+Begin Tran 
+Update Device 
+Set IsPerformanceMonitorDisabled = 0 
+Where IsPerformanceMonitorDisabled = 1 
+and HostName = 'P054D11LAWSQL01.DM11.LOCAL'
+--Commit tran
+--Rollback
+
+
+-----------------------------------------------------------------------------------------------------------
+
+Select * from EventSourceConnection
+  Where IsPerformanceMonitorDisabled = 1 
+
+Begin Tran
+  Update EventSourceConnection
+  Set IsPerformanceMonitorDisabled = 0 
+  --Where IsPerformanceMonitorDisabled = 1 AND 
+where ObjectName like '%P054D11LAWSQL01%'
+
+--Commit Tran
+--Rollback
+
+
+
+

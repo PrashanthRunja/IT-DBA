@@ -1,0 +1,59 @@
+--ServerList
+use SQLSentry
+SELECT 
+      [FullName]
+      ,[SiteName]
+      ,[IsWatched]
+      ,[ManagementEngineName]
+      ,[Version]
+  FROM [SQLSentry].[dbo].[vwServerList]
+  --where IsWatched=0
+  order by Version
+
+--Count of server group by Poler machines
+Select [ManagementEngineName], count( [FullName])As Count
+FROM [SQLSentry].[dbo].[vwServerList]
+group by [ManagementEngineName]
+
+--Top SQL, Bloackings
+use SQLSentry
+SELECT TOP (1000)
+      [RemoteObjectID]
+      ,[Database]
+      ,[RunStatus]
+      ,[Computer]
+      ,[Operator]
+      ,[MessageText]
+      ,[Application]
+      ,[StartTime]
+      ,[EndTime]
+      ,[Duration]
+      ,[ReviewState]
+      ,[ErrorNumber]
+      ,[WaitType]
+      ,[WaitText]
+      ,[LastBatch]
+  FROM [SQLSentry].[dbo].[vwMetaHistorySqlServerBlockLog]
+  --where 
+  --RemoteObjectID ='Top SQL'
+  --RemoteObjectID ='Blocking SQL'
+  order by StartTime desc
+
+
+
+--Event Logs
+use SQLSentry
+SELECT TOP (1000) 
+      [ConditionCategoryName]
+      ,[ObjectName]
+      ,[ObjectType]
+      ,[DynamicConditionID]
+      ,[DynamicConditionName]
+      ,[Severity]
+      ,[NormalizedStartTimeUtc]
+      ,[NormalizedEndTimeUtc]
+      ,[Duration]
+      ,[IsResolved]
+  FROM [SQLSentry].[dbo].[vwEventsLog]
+  where NormalizedStartTimeUtc not in ('2023-12-14 19:18:13.000','2023-12-14 19:18:14.000')
+  order by NormalizedEndTimeUtc desc

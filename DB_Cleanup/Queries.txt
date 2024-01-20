@@ -1,0 +1,31 @@
+--Query to find DB last Used.
+SELECT name as [Database Name], [LastAccessDate] =(select MAX(temp.lastaccess)
+from ( select lastaccess =
+max(last_user_seek)
+where max(last_user_seek)is not null
+union all
+select lastaccess = max(last_user_scan)
+where max(last_user_scan)is not null
+union all
+select lastaccess = max(last_user_lookup)
+where max(last_user_lookup) is not null
+union all
+select lastaccess =max(last_user_update)
+where max(last_user_update) is not null) temp),[ApplicationName] =(select MAX(sp.program_name)), [Hostname] =(select MAX(sp.hostname)) 
+FROM master.dbo.sysdatabases sysdb
+left outer join sys.dm_db_index_usage_stats Idxus
+on sysdb.dbid= Idxus.database_id
+left JOin sysprocesses sp ON sysdb.dbid = sp.dbid
+WHERE  sysdb.dbid NOT BETWEEN 0 AND 4
+group by sysdb.name
+
+-- Run the below on MGMT03
+select  A.datacenter,A.sqlinstance,A.databasename,B.DatabaseGB,C.[Application],C.BU,C.ServerType,D.SQLEdition,D.Cores,A.LastAccessdate,A. ApplicationName,A.Hostname
+from DatabaseLastUsed A
+left join databasesettings B
+ON A.datacenter=B.datacenter and A.sqlinstance=B.sqlinstance and A.databasename=B.databasename
+left join [DBASupport].DW.[ServerAppMap] C
+on A.sqlinstance = c.Servername
+left join [DBASupport].dbo.[cms_tracker] D
+on A.sqlinstance = D.instance
+order by A.LastAccessdate

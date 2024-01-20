@@ -1,0 +1,526 @@
+USE [DBASupport]
+GO
+
+TRUNCATE table [dbo].[MaintParameter]
+GO
+
+SET IDENTITY_INSERT [dbo].[MaintParameter] ON 
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (1, N'DatabaseIntegrityCheck - USER_DATABASES', N'@Databases', N'C', N'[master]')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (2, N'DatabaseIntegrityCheck - USER_DATABASES', N'@Days', N'I', N'0')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (3, N'DatabaseIntegrityCheck - USER_DATABASES', N'@PaddingHours', N'I', N'0')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (4, N'DatabaseIntegrityCheck - USER_DATABASES', N'@Duration', N'I', N'540')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (5, N'DatabaseIntegrityCheck - USER_DATABASES', N'@CheckCommands', N'C', N'CheckDB')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (6, N'DatabaseIntegrityCheck - USER_DATABASES', N'@PhysicalOnly', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (7, N'DatabaseIntegrityCheck - USER_DATABASES', N'@NoIndex', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (8, N'DatabaseIntegrityCheck - USER_DATABASES', N'@ExtendedLogicalChecks', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (9, N'DatabaseIntegrityCheck - USER_DATABASES', N'@TabLock', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (10, N'DatabaseIntegrityCheck - USER_DATABASES', N'@FileGroups', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (11, N'DatabaseIntegrityCheck - USER_DATABASES', N'@Objects', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (12, N'DatabaseIntegrityCheck - USER_DATABASES', N'@MaxDOP', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (13, N'DatabaseIntegrityCheck - USER_DATABASES', N'@AvailabilityGroups', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (14, N'DatabaseIntegrityCheck - USER_DATABASES', N'@AvailabilityGroupReplicas', N'C', N'ALL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (15, N'DatabaseIntegrityCheck - USER_DATABASES', N'@Updateability', N'C', N'ALL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (16, N'DatabaseIntegrityCheck - USER_DATABASES', N'@LockTimeOut', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (17, N'DatabaseIntegrityCheck - USER_DATABASES', N'@LogToTable', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (18, N'DatabaseIntegrityCheck - USER_DATABASES', N'@Execute', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (19, N'DatabaseIntegrityCheck - USER_DATABASES', N'@Delim', N'C', N',')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (20, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@Databases', N'C', N'master')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (21, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@Days', N'I', N'4')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (22, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@PaddingHours', N'I', N'0')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (23, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@Duration', N'I', N'720')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (24, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@CheckCommands', N'C', N'CheckDB')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (25, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@PhysicalOnly', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (26, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@NoIndex', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (27, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@ExtendedLogicalChecks', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (28, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@TabLock', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (29, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@FileGroups', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (30, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@Objects', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (31, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@MaxDOP', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (32, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@AvailabilityGroups', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (33, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@AvailabilityGroupReplicas', N'C', N'ALL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (34, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@Updateability', N'C', N'ALL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (35, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@LockTimeOut', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (36, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@LogToTable', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (37, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@Execute', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (38, N'DatabaseIntegrityCheck - USER_DATABASES Pickup', N'@Delim', N'C', N',')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (39, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@Databases', N'C', N'SYSTEM_DATABASES')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (40, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@Days', N'I', N'0')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (41, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@PaddingHours', N'I', N'0')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (42, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@Duration', N'I', N'720')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (43, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@CheckCommands', N'C', N'CheckDB')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (44, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@PhysicalOnly', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (45, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@NoIndex', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (46, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@ExtendedLogicalChecks', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (47, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@TabLock', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (48, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@FileGroups', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (49, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@Objects', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (50, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@MaxDOP', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (51, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@AvailabilityGroups', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (52, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@AvailabilityGroupReplicas', N'C', N'ALL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (53, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@Updateability', N'C', N'ALL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (54, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@LockTimeOut', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (55, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@LogToTable', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (56, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@Execute', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (57, N'DatabaseIntegrityCheck - SYSTEM_DATABASES', N'@Delim', N'C', N'<delim>')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (58, N'DatabaseBackup - USER_DATABASES - FULL', N'@Databases', N'C', N'USER_DATABASES')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (59, N'DatabaseBackup - USER_DATABASES - FULL', N'@Days', N'I', N'2')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (60, N'DatabaseBackup - USER_DATABASES - FULL', N'@paddinghours', N'I', N'12')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (61, N'DatabaseBackup - USER_DATABASES - FULL', N'@Duration', N'I', N'720')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (62, N'DatabaseBackup - USER_DATABASES - FULL', N'@MaxSizeGB', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (63, N'DatabaseBackup - USER_DATABASES - FULL', N'@Split', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (64, N'DatabaseBackup - USER_DATABASES - FULL', N'@directory ', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (65, N'DatabaseBackup - USER_DATABASES - FULL', N'@backuptype', N'C', N'FULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (66, N'DatabaseBackup - USER_DATABASES - FULL', N'@verify', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (67, N'DatabaseBackup - USER_DATABASES - FULL', N'@cleanuptime', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (68, N'DatabaseBackup - USER_DATABASES - FULL', N'@compress', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (69, N'DatabaseBackup - USER_DATABASES - FULL', N'@copyonly', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (70, N'DatabaseBackup - USER_DATABASES - FULL', N'@changebackuptype', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (71, N'DatabaseBackup - USER_DATABASES - FULL', N'@backupsoftware', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (72, N'DatabaseBackup - USER_DATABASES - FULL', N'@checksum', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (73, N'DatabaseBackup - USER_DATABASES - FULL', N'@blocksize', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (74, N'DatabaseBackup - USER_DATABASES - FULL', N'@buffercount', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (75, N'DatabaseBackup - USER_DATABASES - FULL', N'@maxtransfersize', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (76, N'DatabaseBackup - USER_DATABASES - FULL', N'@numberoffiles', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (77, N'DatabaseBackup - USER_DATABASES - FULL', N'@compressionlevel', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (78, N'DatabaseBackup - USER_DATABASES - FULL', N'@description', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (79, N'DatabaseBackup - USER_DATABASES - FULL', N'@threads', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (80, N'DatabaseBackup - USER_DATABASES - FULL', N'@throttle', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (81, N'DatabaseBackup - USER_DATABASES - FULL', N'@logtotable', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (82, N'DatabaseBackup - USER_DATABASES - FULL', N'@execute', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (83, N'DatabaseBackup - USER_DATABASES - FULL', N'@Delim', N'C', N'<delim>')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (84, N'DatabaseBackup - USER_DATABASES - DIFF', N'@Databases', N'C', N'USER_DATABASES')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (85, N'DatabaseBackup - USER_DATABASES - DIFF', N'@Days', N'I', N'1')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (86, N'DatabaseBackup - USER_DATABASES - DIFF', N'@paddinghours', N'I', N'23')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (87, N'DatabaseBackup - USER_DATABASES - DIFF', N'@Duration', N'I', N'720')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (88, N'DatabaseBackup - USER_DATABASES - DIFF', N'@MaxSizeGB', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (89, N'DatabaseBackup - USER_DATABASES - DIFF', N'@Split', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (90, N'DatabaseBackup - USER_DATABASES - DIFF', N'@directory ', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (91, N'DatabaseBackup - USER_DATABASES - DIFF', N'@backuptype', N'C', N'DIFF')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (92, N'DatabaseBackup - USER_DATABASES - DIFF', N'@verify', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (93, N'DatabaseBackup - USER_DATABASES - DIFF', N'@cleanuptime', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (94, N'DatabaseBackup - USER_DATABASES - DIFF', N'@compress', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (95, N'DatabaseBackup - USER_DATABASES - DIFF', N'@copyonly', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (96, N'DatabaseBackup - USER_DATABASES - DIFF', N'@changebackuptype', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (97, N'DatabaseBackup - USER_DATABASES - DIFF', N'@backupsoftware', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (98, N'DatabaseBackup - USER_DATABASES - DIFF', N'@checksum', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (99, N'DatabaseBackup - USER_DATABASES - DIFF', N'@blocksize', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (100, N'DatabaseBackup - USER_DATABASES - DIFF', N'@buffercount', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (101, N'DatabaseBackup - USER_DATABASES - DIFF', N'@maxtransfersize', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (102, N'DatabaseBackup - USER_DATABASES - DIFF', N'@numberoffiles', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (103, N'DatabaseBackup - USER_DATABASES - DIFF', N'@compressionlevel', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (104, N'DatabaseBackup - USER_DATABASES - DIFF', N'@description', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (105, N'DatabaseBackup - USER_DATABASES - DIFF', N'@threads', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (106, N'DatabaseBackup - USER_DATABASES - DIFF', N'@throttle', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (107, N'DatabaseBackup - USER_DATABASES - DIFF', N'@logtotable', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (108, N'DatabaseBackup - USER_DATABASES - DIFF', N'@execute', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (109, N'DatabaseBackup - USER_DATABASES - DIFF', N'@Delim', N'C', N'<delim>')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (110, N'DatabaseBackup - USER_DATABASES - LOG', N'@Databases', N'C', N'USER_DATABASES')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (111, N'DatabaseBackup - USER_DATABASES - LOG', N'@Days', N'I', N'0')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (112, N'DatabaseBackup - USER_DATABASES - LOG', N'@paddinghours', N'I', N'0')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (113, N'DatabaseBackup - USER_DATABASES - LOG', N'@Duration', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (114, N'DatabaseBackup - USER_DATABASES - LOG', N'@MaxSizeGB', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (115, N'DatabaseBackup - USER_DATABASES - LOG', N'@Split', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (116, N'DatabaseBackup - USER_DATABASES - LOG', N'@directory ', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (117, N'DatabaseBackup - USER_DATABASES - LOG', N'@backuptype', N'C', N'LOG')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (118, N'DatabaseBackup - USER_DATABASES - LOG', N'@verify', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (119, N'DatabaseBackup - USER_DATABASES - LOG', N'@cleanuptime', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (120, N'DatabaseBackup - USER_DATABASES - LOG', N'@compress', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (121, N'DatabaseBackup - USER_DATABASES - LOG', N'@copyonly', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (122, N'DatabaseBackup - USER_DATABASES - LOG', N'@changebackuptype', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (123, N'DatabaseBackup - USER_DATABASES - LOG', N'@backupsoftware', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (124, N'DatabaseBackup - USER_DATABASES - LOG', N'@checksum', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (125, N'DatabaseBackup - USER_DATABASES - LOG', N'@blocksize', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (126, N'DatabaseBackup - USER_DATABASES - LOG', N'@buffercount', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (127, N'DatabaseBackup - USER_DATABASES - LOG', N'@maxtransfersize', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (128, N'DatabaseBackup - USER_DATABASES - LOG', N'@numberoffiles', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (129, N'DatabaseBackup - USER_DATABASES - LOG', N'@compressionlevel', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (130, N'DatabaseBackup - USER_DATABASES - LOG', N'@description', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (131, N'DatabaseBackup - USER_DATABASES - LOG', N'@threads', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (132, N'DatabaseBackup - USER_DATABASES - LOG', N'@throttle', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (133, N'DatabaseBackup - USER_DATABASES - LOG', N'@logtotable', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (134, N'DatabaseBackup - USER_DATABASES - LOG', N'@execute', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (135, N'DatabaseBackup - USER_DATABASES - LOG', N'@Delim', N'C', N'<delim>')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (136, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@Databases', N'C', N'SYSTEM_DATABASES')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (137, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@Days', N'I', N'0')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (138, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@paddinghours', N'I', N'0')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (139, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@Duration', N'I', N'720')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (140, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@MaxSizeGB', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (141, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@Split', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (142, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@directory ', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (143, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@backuptype', N'C', N'FULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (144, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@verify', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (145, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@cleanuptime', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (146, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@compress', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (147, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@copyonly', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (148, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@changebackuptype', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (149, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@backupsoftware', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (150, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@checksum', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (151, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@blocksize', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (152, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@buffercount', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (153, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@maxtransfersize', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (154, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@numberoffiles', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (155, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@compressionlevel', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (156, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@description', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (157, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@threads', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (158, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@throttle', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (159, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@logtotable', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (160, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@execute', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (161, N'DatabaseBackup - SYSTEM_DATABASES - FULL', N'@Delim', N'C', N'<delim>')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (162, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@Databases', N'C', N'master')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (163, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@Days', N'I', N'7')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (164, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@paddinghours', N'I', N'0')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (165, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@Duration', N'I', N'720')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (166, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@MaxSizeGB', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (167, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@Split', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (168, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@directory ', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (169, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@backuptype', N'C', N'FULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (170, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@verify', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (171, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@cleanuptime', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (172, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@compress', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (173, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@copyonly', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (174, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@changebackuptype', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (175, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@backupsoftware', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (176, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@checksum', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (177, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@blocksize', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (178, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@buffercount', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (179, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@maxtransfersize', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (180, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@numberoffiles', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (181, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@compressionlevel', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (182, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@description', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (183, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@threads', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (184, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@throttle', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (185, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@logtotable', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (186, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@execute', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (187, N'DatabaseBackup - USER_DATABASES - FULL Pickup', N'@Delim', N'C', N'<delim>')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (188, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@Databases', N'C', N'USER_DATABASES')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (189, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@Days', N'I', N'2')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (190, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@paddinghours', N'I', N'0')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (191, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@Duration', N'I', N'1440')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (192, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@MaxSizeGB', N'I', N'1024')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (193, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@Split', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (194, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@directory ', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (195, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@backuptype', N'C', N'FULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (196, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@verify', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (197, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@cleanuptime', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (198, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@compress', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (199, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@copyonly', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (200, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@changebackuptype', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (201, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@backupsoftware', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (202, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@checksum', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (203, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@blocksize', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (204, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@buffercount', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (205, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@maxtransfersize', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (206, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@numberoffiles', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (207, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@compressionlevel', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (208, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@description', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (209, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@threads', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (210, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@throttle', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (211, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@logtotable', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (212, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@execute', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (213, N'DatabaseBackup - USER_DATABASES - FULL UNDER 1024G', N'@Delim', N'C', N'<delim>')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (214, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@Databases', N'C', N'USER_DATABASES')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (215, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@Days', N'I', N'2')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (216, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@paddinghours', N'I', N'0')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (217, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@Duration', N'I', N'1440')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (218, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@MaxSizeGB', N'I', N'1024')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (219, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@Split', N'I', N'8')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (220, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@directory ', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (221, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@backuptype', N'C', N'FULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (222, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@verify', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (223, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@cleanuptime', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (224, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@compress', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (225, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@copyonly', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (226, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@changebackuptype', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (227, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@backupsoftware', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (228, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@checksum', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (229, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@blocksize', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (230, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@buffercount', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (231, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@maxtransfersize', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (232, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@numberoffiles', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (233, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@compressionlevel', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (234, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@description', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (235, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@threads', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (236, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@throttle', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (237, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@logtotable', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (238, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@execute', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (239, N'DatabaseBackup - USER_DATABASES - FULL OVER 1024G', N'@Delim', N'C', N'<delim>')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (240, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@Databases', N'C', N'master')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (241, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@Days', N'I', N'0')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (242, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@PaddingHours', N'I', N'0')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (243, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@Duration', N'I', N'720')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (244, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@CheckCommands', N'C', N'CheckDB')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (245, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@PhysicalOnly', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (246, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@NoIndex', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (247, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@ExtendedLogicalChecks', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (248, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@TabLock', N'C', N'N')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (249, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@FileGroups', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (250, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@Objects', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (251, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@MaxDOP', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (252, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@AvailabilityGroups', N'C', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (253, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@AvailabilityGroupReplicas', N'C', N'ALL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (254, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@Updateability', N'C', N'ALL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (255, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@LockTimeOut', N'I', N'NULL')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (256, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@LogToTable', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (257, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@Execute', N'C', N'Y')
+GO
+INSERT [dbo].[MaintParameter] ([Param_ID], [Param_Job], [Param_Name], [Param_Type], [Param_Value]) VALUES (258, N'DatabaseIntegrityCheck - USER_DATABASES > 2TB', N'@Delim', N'C', N',')
+GO
+SET IDENTITY_INSERT [dbo].[MaintParameter] OFF
+GO

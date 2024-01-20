@@ -1,0 +1,5 @@
+SELECT Datacenter,SqlInstance,DatabaseName,RecoveryModel,StateDesc,ReadOnly,DatabaseGB,DataSizeGB--Datacenter, count(sqlinstance), SUM(convert(decimal(6,2), DatabaseGB))  as DBsize
+FROM [DBASupport].[dbo].[DatabaseSettings_master]
+where (databasename like '%tmp%' or databasename like '%temp%' or databasename like '%test%' or databasename like '%tst%' or databasename like '%back%'
+or databasename like '%Bkp%' or databasename like '%Old%' or databasename like '%arch%')
+and (databasename !='tempdb' and databasename !='ReportServerTempDB' and databasename !='SecretStore' and databasename !='NexlpStorybookTemplate' and databasename !='EDDSArchiving' and databasename !='EDDSArchiveTool')

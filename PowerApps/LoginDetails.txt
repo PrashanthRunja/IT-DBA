@@ -1,0 +1,4 @@
+PowerApss Gateway details
+Gateway name:EPIQDBA
+Pass : Epiq@12345
+email: prashanthkumar.runja@epiqglobal.com

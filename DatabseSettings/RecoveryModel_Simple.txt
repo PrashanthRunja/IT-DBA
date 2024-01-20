@@ -1,0 +1,24 @@
+--RecoveryModelSimple by Datacenter
+SELECT Datacenter, count(DatabaseName) from dbo.databasesettings_master
+where RecoveryModel = 'SIMPLE' and
+DatabaseName not in ('master','model','tempdb','msdb','DBAsupport','ReportServerTempdb','DTIWork','DTIGlobal') and
+DatabaseName not like 'Sandbox%' and
+Datacenter <> 'DQS' and
+SQLInstance not like 'Q0%' and
+SQLInstance not like 'D0%' and
+SQLInstance not like 'S0%'
+group by Datacenter
+order by Datacenter
+
+--RecoveryModelSimple by Sqlinstance
+SELECT Sqlinstance,count(Sqlinstance) As CountbyServer from dbo.databasesettings_master
+where RecoveryModel = 'SIMPLE' and
+DatabaseName not in ('master','model','tempdb','msdb','DBAsupport','ReportServerTempdb','DTIWork','DTIGlobal') and
+DatabaseName not like 'Sandbox%' and
+Datacenter <> 'DQS' and
+SQLInstance not like 'Q0%' and
+SQLInstance not like 'D0%' and
+SQLInstance not like 'S0%'
+and Datacenter in ('LVDC','LVDC-EMS')
+group by Sqlinstance
+order by Sqlinstance

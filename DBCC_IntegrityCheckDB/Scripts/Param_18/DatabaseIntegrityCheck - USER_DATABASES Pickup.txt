@@ -1,0 +1,198 @@
+USE [msdb]
+GO
+
+/****** Object:  Job [DatabaseIntegrityCheck - USER_DATABASES Pickup]    Script Date: 10/5/2023 1:30:14 AM ******/
+EXEC msdb.dbo.sp_delete_job @job_name=N'DatabaseIntegrityCheck - USER_DATABASES Pickup'
+GO
+
+/****** Object:  Job [DatabaseIntegrityCheck - USER_DATABASES Pickup]    Script Date: 10/5/2023 1:30:14 AM ******/
+BEGIN TRANSACTION
+DECLARE @ReturnCode INT
+SELECT @ReturnCode = 0
+/****** Object:  JobCategory [DBA]    Script Date: 10/5/2023 1:30:14 AM ******/
+IF NOT EXISTS (SELECT name FROM msdb.dbo.syscategories WHERE name=N'DBA' AND category_class=1)
+BEGIN
+EXEC @ReturnCode = msdb.dbo.sp_add_category @class=N'JOB', @type=N'LOCAL', @name=N'DBA'
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+
+END
+
+DECLARE @jobId BINARY(16)
+EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'DatabaseIntegrityCheck - USER_DATABASES Pickup', 
+		@enabled=1, 
+		@notify_level_eventlog=3, 
+		@notify_level_email=2, 
+		@notify_level_netsend=0, 
+		@notify_level_page=0, 
+		@delete_level=0, 
+		@description=N'Pickup DBs not having run in-place DBCC CHECKDB for DB <2TB', 
+		@category_name=N'DBA', 
+		@owner_login_name=N'sa', 
+		@notify_email_operator_name=N'SQLSupport', @job_id = @jobId OUTPUT
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+/****** Object:  Step [ListDbsSmallerThan]    Script Date: 10/5/2023 1:30:14 AM ******/
+EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'ListDbsSmallerThan', 
+		@step_id=1, 
+		@cmdexec_success_code=0, 
+		@on_success_action=3, 
+		@on_success_step_id=0, 
+		@on_fail_action=2, 
+		@on_fail_step_id=0, 
+		@retry_attempts=0, 
+		@retry_interval=0, 
+		@os_run_priority=0, @subsystem=N'TSQL', 
+		@command=N'DECLARE @DBList VARCHAR(MAX)
+
+DECLARE @DaysBetween TINYINT = 13
+DECLARE @DBThreshGB INT = 2048
+
+
+-- Since we are loading the database names, we need to expand the size of the Param_Value field, if needed.  -1 means MAX.
+IF NOT EXISTS(SELECT * FROM sys.columns
+      WHERE OBJECT_NAME(OBJECT_ID) = ''MaintParameter'' AND [NAME] = ''Param_Value'' AND max_length = -1)
+BEGIN
+	CREATE TABLE dbo.Tmp_MaintParameter
+		(
+		Param_ID int NOT NULL IDENTITY (1, 1),
+		Param_Job nvarchar(128) NULL,
+		Param_Name nvarchar(128) NULL,
+		Param_Type nvarchar(10) NULL,
+		Param_Value nvarchar(MAX) NULL
+		)  ON [PRIMARY]
+		 TEXTIMAGE_ON [PRIMARY]
+
+	ALTER TABLE dbo.Tmp_MaintParameter SET (LOCK_ESCALATION = TABLE)
+
+	SET IDENTITY_INSERT dbo.Tmp_MaintParameter ON
+
+	IF EXISTS(SELECT * FROM dbo.MaintParameter)
+		 EXEC(''INSERT INTO dbo.Tmp_MaintParameter (Param_ID, Param_Job, Param_Name, Param_Type, Param_Value)
+			SELECT Param_ID, Param_Job, Param_Name, Param_Type, CONVERT(nvarchar(MAX), Param_Value) FROM dbo.MaintParameter WITH (HOLDLOCK TABLOCKX)'')
+
+	SET IDENTITY_INSERT dbo.Tmp_MaintParameter OFF
+
+	DROP TABLE dbo.MaintParameter
+
+	EXECUTE sp_rename N''dbo.Tmp_MaintParameter'', N''MaintParameter'', ''OBJECT'' 
+END
+
+
+IF OBJECT_ID(N''tempdb.dbo.#DBInfo'', N''U'') IS NOT NULL  
+   DROP TABLE #DBInfo;  
+IF OBJECT_ID(N''tempdb.dbo.#Value'', N''U'') IS NOT NULL  
+   DROP TABLE #Value;  
+IF OBJECT_ID(N''tempdb.dbo.#TempDBs'', N''U'') IS NOT NULL  
+   DROP TABLE #TempDBs;  
+
+-- Get only databases < 2TB
+SELECT d.[Name]
+INTO #TempDBs
+FROM sys.master_files mf
+INNER JOIN sys.databases d ON d.database_id = mf.database_id
+WHERE d.database_id > 4
+GROUP BY d.[Name]
+HAVING (SUM(CAST(mf.size AS BIGINT)) * 8 / 1024) / 1024 < @DBThreshGB
+
+-- Retreive the last CHECKDB date for all databases
+CREATE TABLE #DBInfo (ParentObject VARCHAR(255), [Object] VARCHAR(255), Field VARCHAR(255), [Value] VARCHAR(255))
+CREATE TABLE #Value (DatabaseName VARCHAR(255), LastDBCCCheckDB DATETIME)
+EXECUTE sp_MSforeachdb ''INSERT INTO #DBInfo EXECUTE (''''DBCC DBINFO ( ''''''''?'''''''' ) WITH TABLERESULTS, NO_INFOMSGS'''');
+INSERT INTO #Value (DatabaseName, LastDBCCCheckDB) (SELECT ''''?'''', [Value] FROM #DBInfo WHERE Field = ''''dbi_dbccLastKnownGood'''');
+TRUNCATE TABLE #DBInfo;''
+
+-- Put the databases > 2TB in a comma-delimited list
+SELECT @DBList = COALESCE(@DBList + ''], ['','''') + DatabaseName
+		FROM #Value v
+		INNER JOIN #TempDBs t
+		  ON v.DatabaseName = t.[Name]
+		WHERE LastDBCCCheckDB < DATEADD(DAY,  -@DaysBetween, GETDATE())
+		ORDER BY LastDBCCCheckDB
+
+-- Cap off the list
+SELECT @DBList = ''['' + @DBList + '']''
+
+IF @DBList IS NULL
+	SELECT @DBList=''master''
+
+-- UPDATE the parameter table to values needed for this run
+UPDATE [DBASupport].[dbo].[MaintParameter]
+SET [Param_Value] = @DaysBetween
+WHERE [Param_Job] = ''DatabaseIntegrityCheck - USER_DATABASES Pickup''
+       AND [Param_Name] = ''@Days''
+
+UPDATE [DBASupport].[dbo].[MaintParameter]
+SET [Param_Value] = @DBList
+WHERE [Param_Job] = ''DatabaseIntegrityCheck - USER_DATABASES Pickup''
+       AND [Param_Name] = ''@Databases''
+', 
+		@database_name=N'DBASupport', 
+		@flags=0
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+/****** Object:  Step [DatabaseIntegrityCheck - USER_DATABASES Pickup]    Script Date: 10/5/2023 1:30:15 AM ******/
+EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'DatabaseIntegrityCheck - USER_DATABASES Pickup', 
+		@step_id=2, 
+		@cmdexec_success_code=0, 
+		@on_success_action=1, 
+		@on_success_step_id=0, 
+		@on_fail_action=2, 
+		@on_fail_step_id=0, 
+		@retry_attempts=0, 
+		@retry_interval=0, 
+		@os_run_priority=0, @subsystem=N'TSQL', 
+		@command=N'use DBASupport
+DECLARE @CMD NVARCHAR (MAX)
+
+--PreStuff Variable
+SET @CMD = ''EXECUTE [dbasupport].[dbo].[DatabaseIntegrityCheck_Builder] ''
+
+-- Pull Parameters together
+SELECT @CMD = COALESCE( @CMD + Param_Name + '' = '' + 
+                            CASE Param_Type 
+                                                    WHEN ''C'' 
+                                                           THEN  '''''''' + Param_Value + ''''''''
+                                                       ELSE 
+                                                           Param_Value
+                                             END
+                                                + '','' , ''''  ) 
+  FROM MaintParameter
+WHERE Param_Job = ''DatabaseIntegrityCheck - USER_DATABASES Pickup''
+
+SELECT @Cmd =  LEFT (@Cmd, LEN(@CMD)-1)
+
+-- Change ''NULL'' to NULL
+SELECT @CMD = REPLACE(@CMD, ''''''NULL'''''', ''NULL'')
+
+--PRINT @CMD
+
+EXECUTE (@CMD)
+', 
+		@database_name=N'DBASupport', 
+		@output_file_name=N'$(ESCAPE_SQUOTE(SQLLOGDIR))\DatabaseIntegrityCheck_USER_DATABASES_Pickup_$(ESCAPE_SQUOTE(JOBID))_$(ESCAPE_SQUOTE(STEPID))_$(ESCAPE_SQUOTE(STRTDT))_$(ESCAPE_SQUOTE(STRTTM)).txt', 
+		@flags=0
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+EXEC @ReturnCode = msdb.dbo.sp_update_job @job_id = @jobId, @start_step_id = 1
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+EXEC @ReturnCode = msdb.dbo.sp_add_jobschedule @job_id=@jobId, @name=N'SUN 0600PM', 
+		@enabled=1, 
+		@freq_type=8, 
+		@freq_interval=1, 
+		@freq_subday_type=1, 
+		@freq_subday_interval=0, 
+		@freq_relative_interval=0, 
+		@freq_recurrence_factor=1, 
+		@active_start_date=20211110, 
+		@active_end_date=99991231, 
+		@active_start_time=180000, 
+		@active_end_time=235959, 
+		@schedule_uid=N'88931447-dfe4-40b7-9ea5-8d51a3566c4c'
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+EXEC @ReturnCode = msdb.dbo.sp_add_jobserver @job_id = @jobId, @server_name = N'(local)'
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+COMMIT TRANSACTION
+GOTO EndSave
+QuitWithRollback:
+    IF (@@TRANCOUNT > 0) ROLLBACK TRANSACTION
+EndSave:
+GO
+
+

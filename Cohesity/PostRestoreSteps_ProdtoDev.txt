@@ -1,0 +1,53 @@
+
+/****************** RESTORE DATABASE TO DEV/DA SERVER FROM PRODUCTION COPY ******************/
+exec xp_cmdshell 'net use \\10.35.13.52\p054-ECAR-sql /user:svc_SQL-ECAR "GfbILH8P2kBu" /persist:yes'
+GO
+exec xp_cmdshell 'net use \\10.11.238.12\p054-ecar-sql /user:svc_sql-ecar "BackupsAreGoodBusiness!" /persist:yes'
+GO
+EXEC xp_cmdshell 'net use \\10.35.238.52\p054-ECAR-sql /user:svc_sql-ecar "GfbILH8P2kBu" /persist:yes'
+Go 
+--STEP 1--   -- original command without variables
+    ALTER DATABASE CA40055182     SET SINGLE_USER WITH ROLLBACK IMMEDIATE
+    GO
+    DROP DATABASE CA40055182    
+    GO  --STEP 2--
+-- Restore db to the appropriate drive and file path, based on above results.  
+-- When adding an additional copy, add the extension to the file path (....\CA8398.mdf/.ldf), not the logical name     IF NOT EXISTS (select name from sys.databases where name = 'CA40055182') 
+    BEGIN
+    RESTORE DATABASE CA40055182   
+    -- RESTORE FILELISTONLY 
+        FROM DISK = N'\\10.35.238.52\p054-ECAR-sql\P054ECASQLS09\CA40055182\FULL\P054ECASQLS09_CA40055182_FULL_20220719_171105_4.bak'
+        WITH                  
+        MOVE 'CA40055182_data' TO 'E:\MSSQL_DATA_01\MSSQL2017.MSSQLSERVER\Data\CA40055182_data.MDF',
+        MOVE 'CA40055182_log' TO 'E:\MSSQL_LOGS_01\MSSQL2017.MSSQLSERVER\Logs\CA40055182_log.LDF',
+        RECOVERY, 
+        STATS = 5  
+    END
+    ELSE PRINT 'Database already exists'         ---sp_helpdb 'CA40058354'   -- If naming new db differently than in production, change the logical file name 
+    --ALTER DATABASE CA8398_cj MODIFY FILE (NAME = 'CA8398_data', NEWNAME = 'CA8398_cj_data')
+    --ALTER DATABASE CA8398_cj MODIFY FILE (NAME = 'CA8398_log', NEWNAME = 'CA8398_cj_log')
+    -- ALTER DATABASE CA8398_ss MODIFY FILE (NAME = 'CA8398_Log2', NEWNAME = 'CA8398_log2') --STEP 3-- -- Modify new database accordingly
+    ALTER DATABASE CA40055182   SET RECOVERY SIMPLE
+    USE CA40055182   
+    exec sp_changedbowner 'sa' 
+    USE CA40055182  
+    exec dbo.RegenerateMasterKey  -- this may fail, that's okay
+    EXEC sp_change_users_login 'Report'
+    EXEC sp_change_users_login 'update_one','usrca','usrca'
+    EXEC sp_change_users_login 'update_one','rptuser','rptuser'  -- this may fail, that's okay
+    EXEC sp_change_users_login 'update_one','UsrCA','UsrCA'
+    EXEC sp_change_users_login 'update_one','CA_Web_User','CA_Web_User'     EXEC sp_addrolemember 'db_owner','ECA_DataAnalysts'
+    EXEC sp_addrolemember 'db_owner','amer\CA_ApplicationDev'
+    exec sp_addrolemember 'db_datareader', 'AMER\ET-GG-ECA_PWRQRY' 
+--STEP 4-- -- Update Extended Properties record to reflect SR, requester and date --> only change the @value
+    --If an error occurs because it already exists, r-click db and go to properties to delete the record and then add it again
+EXEC sys.sp_addextendedproperty
+     @name  = N'DB_create_Details',  
+     @value = N'7345040             Clark, Jeffrey 2022-07-19' 
+-- Grab server name to use in SR remark
+USE master
+SELECT @@servername   /*
+SELECT percent_complete, * FROM sys.dm_exec_requests
+  WHERE command like '%restore%' 
+*/    
+

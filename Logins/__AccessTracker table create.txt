@@ -1,0 +1,16 @@
+use DBASupport 
+ BEGIN
+        EXEC ('CREATE TABLE [dbo].[__AccessTracker]([host_name] sysname, DatabaseName sysname, [login_name] sysname NOT NULL, [login_time] [datetime] NULL) ');
+    END;
+
+INSERT INTO dbo.__AccessTracker ( host_name , DatabaseName , login_name , login_time )
+SELECT D.host_name , D.DatabaseName , D.login_name , D.login_time
+FROM ( SELECT host_name , DB_NAME(sp.dbid) AS DatabaseName , login_name , MAX(ds.login_time) AS login_time
+        FROM SYS.DM_EXEC_SESSIONS AS DS WITH (NOLOCK) JOIN master..sysprocesses AS sp ON sp.spid = ds.session_id
+        WHERE login_name != 'sa'
+        GROUP BY host_name , DB_NAME(sp.dbid) , login_name
+    ) AS D 
+	LEFT JOIN __AccessTracker AS AT ON AT.Host_name = D.host_name AND
+                                       AT.login_name = D.login_name AND
+                                       AT.DatabaseName = D.DatabaseName
+WHERE AT.login_time IS NULL;

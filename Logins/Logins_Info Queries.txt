@@ -1,0 +1,7 @@
+-- Check for ServerRoles
+
+select Datacenter,SqlInstance, max(LoginName) As LoginName,ServerRoleName
+from [DBASupport].[dbo].[Logins_info]
+where SqlInstance = 'P054SQLCI6101.USCUST.LOCAL\AACER01'
+group by Datacenter,SqlInstance,LoginName,ServerRoleName
+order by  LoginName

@@ -1,0 +1,162 @@
+
+USE [master]
+GO
+DECLARE @Loop SMALLINT
+DECLARE @DBCount SMALLINT
+DECLARE @DOSCmd VARCHAR(200)
+DECLARE @DBName VARCHAR(200)
+DECLARE @LogicalName VARCHAR(200)
+DECLARE @FileName VARCHAR(200)
+DECLARE @PathName VARCHAR(200)
+DECLARE @PhysName VARCHAR(2000)
+DECLARE @Subj VARCHAR(100) 
+DECLARE @NewPhysName VARCHAR(2000)
+DECLARE @DBStat VARCHAR(10)
+DECLARE @SingMultCmd VARCHAR(8000)
+DECLARE @OffOnlineCmd VARCHAR(8000)
+DECLARE @RenameCmd VARCHAR(8000)
+DECLARE @HoldEm TABLE (DBName VARCHAR(200), LogicalName VARCHAR(200), PhysName VARCHAR(2000))
+DECLARE @DBs TABLE (DBName VARCHAR(200));
+DECLARE @Profs TABLE (ProfID TINYINT, Prof VARCHAR(50), Descr VARCHAR(50))
+DECLARE @ProfName VARCHAR(50)
+
+-- Not all instances have the CommandLog table
+-- Get the mail profile name
+INSERT INTO @Profs
+EXEC msdb.dbo.sysmail_help_profile_sp @profile_id = 1
+
+SELECT @ProfName = Prof FROM @Profs WHERE ProfID = 1;
+
+
+-- After looking at many files, this criteria proved sufficient.  We could use the file_id=2 for FullText, but I discovered this is not limited to just Relativity
+INSERT INTO @HoldEm
+SELECT DB_NAME(mf.database_id)
+	,mf.[name]
+    ,mf.[physical_name]
+FROM sys.master_files mf
+JOIN sys.databases d
+  ON mf.database_id = d.database_id AND d.[state] = 0
+--JOIN @DBs db
+--  ON d.[Name] = db.DBName
+WHERE RIGHT(RTRIM(mf.[physical_name]),3) NOT IN ('mdf', 'ndf', 'ldf', 'snp', 'dat', 'dff', 'nap','log', '.ss', 'bak')
+--	AND db.DBName IS NULL
+
+-- How many workspaces are to be updated
+SET @DBCount = @@ROWCOUNT
+PRINT @DBCount
+--E:\SQLADMIN_DATA_01\MSSQL2019.SQLADMIN\Data\ZDBTest
+IF @DBCount > 0
+	BEGIN
+		-- Create cursor to iterate through the databases/files that need extentions added
+		DECLARE DB_Cursor CURSOR FOR
+			SELECT DBName
+				, LogicalName
+				, PhysName 
+			FROM @HoldEm
+
+		OPEN DB_Cursor
+
+		FETCH NEXT FROM DB_Cursor INTO @DBName, @LogicalName, @PhysName
+		WHILE @@FETCH_STATUS = 0  
+			BEGIN 
+
+				SET @OffOnlineCmd = 'ALTER DATABASE [' + @DBName + '] SET OFFLINE WITH ROLLBACK IMMEDIATE'
+				EXECUTE (@OffOnlineCmd)
+				print @OffOnlineCmd
+				SELECT @DBStat = State_desc FROM sys.databases WHERE DB_NAME(database_id) = @DBName
+				SET @Loop = 0
+				-- If the database isn''t offline
+				WHILE @DBStat <> 'OFFLINE' AND @Loop < 5
+					BEGIN
+						WAITFOR DELAY '000:00:02'
+						SET @Loop = @Loop + 1
+						EXECUTE (@OffOnlineCmd)
+						WAITFOR DELAY '000:00:02'
+						SELECT @DBStat = State_desc FROM sys.databases WHERE DB_NAME(database_id) = @DBName
+					END
+				IF @DBStat <> 'OFFLINE'
+					BEGIN
+						-- Record issue in the CommandLog table and return back to the beginning with the next file to rename
+						INSERT INTO master.dbo.CommandLog([DatabaseName], [Command], [StartTime], [EndTime], [CommandType], [ErrorNumber], [ErrorMessage])
+						VALUES (@DBName, @LogicalName + ' / ' + @PhysName, GETDATE(), GETDATE(), 'File Extension Append', -1, 'Cannot offline DB')
+
+						-- Gets next record in cursor
+						FETCH NEXT FROM DB_Cursor INTO @DBName, @LogicalName, @PhysName
+						-- Exits this iteration of the cursor
+						CONTINUE
+					END
+
+				SELECT @FileName = RIGHT(@PhysName, CHARINDEX('\',REVERSE(@PhysName))-1)
+				SELECT @PathName = LEFT (@PhysName, LEN(@PhysName) - CHARINDEX('\',REVERSE(@PhysName))+1)
+
+				SET @FileName = @FileName + '.ndf'
+				SET @NewPhysName = @PathName + @FileName
+				SET @DOSCmd = 'rename "' + @PhysName + '" "' + @FileName + '"'
+
+				print @DOSCmd
+				-- Rename the file.
+				BEGIN TRY
+					EXECUTE xp_cmdshell @DOSCmd
+				END TRY
+				BEGIN CATCH
+					-- Record issue in the CommandLog table, set the database back to being ONLINE and MULTI_USER and return back to the beginning with the next file to rename
+					INSERT INTO master.dbo.CommandLog([DatabaseName], [Command], [StartTime], [EndTime], [CommandType], [ErrorNumber], [ErrorMessage])
+					VALUES (@DBName, @LogicalName + ' / ' + @PhysName, GETDATE(), GETDATE(), 'File Extension Append', ERROR_NUMBER(), '!!! RENAME FAILED !!')
+
+					SET @OffOnlineCmd = 'ALTER DATABASE [' + @DBName + '] SET ONLINE'
+					EXECUTE (@OffOnlineCmd)
+
+					-- Get next record in cursor
+					FETCH NEXT FROM DB_Cursor INTO @DBName, @LogicalName, @PhysName
+					-- Exits this iteration of the cursor
+					CONTINUE
+				END CATCH
+
+
+				SET @RenameCmd ='ALTER DATABASE [' + @DBName + '] MODIFY FILE (Name=''' + @LogicalName + ''', FILENAME=''' + @NewPhysName + ''')'
+
+				print @RenameCmd
+				EXECUTE (@RenameCmd)
+
+				-- File has been renamed, so, time to bring the database back ONLINE
+				SET @OffOnlineCmd = 'ALTER DATABASE [' + @DBName + '] SET ONLINE'
+				BEGIN TRY
+					EXECUTE (@OffOnlineCmd)
+				END TRY
+				BEGIN CATCH
+					INSERT INTO master.dbo.CommandLog([DatabaseName], [Command], [StartTime], [EndTime], [CommandType], [ErrorNumber], [ErrorMessage])
+					VALUES (@DBName, @LogicalName + ' / ' + @PhysName, GETDATE(), GETDATE(),'File Extension Append', -1, 'Cannot ONLINE DB')
+					
+					SET @Subj = '** ALERT! File Extension Append ISSUE - ' + @@SERVERNAME + ' - ' + @DBName + ' OFFLINE'
+					EXEC msdb.dbo.sp_send_dbmail  
+							@profile_name = @ProfName,  
+							@recipients = 'prashanthkumar.runja@epiqglobal.com',  
+							@query = 'SELECT @@SERVERNAME, DatabaseName, StartTime, ErrorNumber, ErrorMessage FROM master.dbo.CommandLog WHERE [CommandType] = ''''File Extension Append''''' ,  
+							@subject = @Subj,
+							@importance = 'High';  
+				END CATCH
+					
+				-- Get next record in cursor
+				FETCH NEXT FROM DB_Cursor INTO @DBName, @LogicalName, @PhysName
+			END
+
+		CLOSE DB_Cursor;
+		DEALLOCATE DB_Cursor;
+
+
+-- If any entries were made in the CommandLog table, send an email about it
+	IF EXISTS (SELECT * FROM master.dbo.CommandLog WHERE [CommandType] = 'File Extension Append')
+		BEGIN
+			EXEC msdb.dbo.sp_send_dbmail  
+				@profile_name = @ProfName,  
+				@recipients = 'prashanthkumar.runja@epiqglobal.com',  
+				@query = 'SELECT @@SERVERNAME, DatabaseName, StartTime, ErrorNumber, ErrorMessage FROM master.dbo.CommandLog WHERE [CommandType] = ''''File Extension Append''''' ,  
+				@subject = 'File Extension Append ISSUE',  
+				@importance = 'High';  
+		END
+	END
+
+ 
+
+
+

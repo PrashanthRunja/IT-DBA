@@ -1,0 +1,20 @@
+DECLARE @JobID UNIQUEIDENTIFIER
+DECLARE @JobCmdStep1 VARCHAR(4000)
+
+SELECT @JobID = job_id
+FROM msdb.dbo.sysjobs
+where [Name] = 'DatabaseIntegrityCheck - USER_DATABASES'
+
+SELECT @JobCmdStep1 = command 
+FROM msdb.dbo.sysjobsteps
+WHERE job_id = @JobID
+	AND step_id = 1
+
+
+SET @JobCmdStep1 = REPLACE(@JobCmdStep1, '@DaysBetween TINYINT = 14', '@DaysBetween TINYINT = 13')
+SET @JobCmdStep1 = REPLACE(@JobCmdStep1, '< DATEADD(DAY,  -@DaysBetween, GETDATE())', '<= DATEADD(DAY,  -@DaysBetween, GETDATE())')
+
+EXEC msdb.dbo.sp_update_jobstep
+	@job_id = @JobID,
+	@command = @JobCmdStep1,
+	@step_id = 1

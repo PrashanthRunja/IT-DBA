@@ -1,0 +1,43 @@
+USE ImageTrustDb
+GO
+/****** Object:  Trigger [dbo].[TR_IK_UPdated]    Script Date: 5/8/2023 2:12:13 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TRIGGER [TR_WFProcesses] ON [ITSCH].[WFProcesses]
+AFTER INSERT
+AS BEGIN
+Declare @Ins nvarchar(max)
+declare @tableHTML2 varchar(1000)
+
+--select * from inserted where inserted.stepState = 'Error'
+IF EXISTS (select * from inserted where inserted.stepState = 'Error')
+	Begin
+	IF object_id('tempdb..#TempA') is not null DROP TABLE #TempA
+	--Insert into #TempA select * from inserted where inserted.stepState = 'Error'
+	select * into tempdb..#TempA from inserted where inserted.stepState = 'Error'  
+	set @tableHTML2 ='<table border="1"> <tr><th>id</th> <th>workflowId</th> <th>nodeId</th><th>batchId</th><th>currentStepId</th><th>stepState</th></TR>'
+	set @tableHTML2 = @tableHTML2 +  CAST((select td = id, '',
+	   td = workflowId, '',
+	   td = nodeId, '',
+	   td = batchId, '',
+	   td = currentStepId, '',
+	   td = stepState, ''
+	   FROM tempdb..#TempA 
+	   FOR XML PATH('tr'), TYPE
+	   ) AS NVARCHAR(MAX) ) +
+	'</table>';
+    RAISERROR ('Error recorded on WFProcesses', 11, 1) with log
+
+	Set @Ins = 'ImageTrustDb has an error on table [WFProcesses]. Please find the details below.' + Char(13)+char(10) + @tableHTML2
+
+	Declare @Out varchar(max) 
+		EXEC msdb.dbo.sp_send_dbmail 
+		@profile_name = 'Administrator', 
+		@recipients = 'BTSHELPDesk@epiqglobal.com', 
+		@body = @Ins,
+		@subject = 'ImageTrust Error Alert!',
+		@body_format = 'HTML'; 
+	END
+END

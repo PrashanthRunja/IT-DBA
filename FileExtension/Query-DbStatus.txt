@@ -1,0 +1,7 @@
+SELECT
+@@SERVERNAME AS [Server Name]
+,NAME AS [Database Name]
+,DATABASEPROPERTYEX(NAME, 'Status') AS [Database Status]
+FROM dbo.sysdatabases
+ORDER BY NAME ASC
+GO

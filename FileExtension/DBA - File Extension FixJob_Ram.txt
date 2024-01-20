@@ -1,0 +1,291 @@
+USE [msdb]
+GO
+
+/****** Object:  Job [DBA - File Extension Fix]    Script Date: 1/31/2023 7:07:01 AM ******/
+BEGIN TRANSACTION
+DECLARE @ReturnCode INT
+SELECT @ReturnCode = 0
+/****** Object:  JobCategory [Database Maintenance]    Script Date: 1/31/2023 7:07:01 AM ******/
+IF NOT EXISTS (SELECT name FROM msdb.dbo.syscategories WHERE name=N'Database Maintenance' AND category_class=1)
+BEGIN
+EXEC @ReturnCode = msdb.dbo.sp_add_category @class=N'JOB', @type=N'LOCAL', @name=N'Database Maintenance'
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+
+END
+
+DECLARE @jobId BINARY(16)
+EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'DBA - File Extension Fix', 
+		@enabled=1, 
+		@notify_level_eventlog=0, 
+		@notify_level_email=2, 
+		@notify_level_netsend=0, 
+		@notify_level_page=0, 
+		@delete_level=0, 
+		@description=N'No description available.', 
+		@category_name=N'Database Maintenance', 
+		@owner_login_name=N'sa', 
+		@notify_email_operator_name=N'SQLSupport', @job_id = @jobId OUTPUT
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+/****** Object:  Step [FixEm]    Script Date: 1/31/2023 7:07:01 AM ******/
+EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'FixEm', 
+		@step_id=1, 
+		@cmdexec_success_code=0, 
+		@on_success_action=1, 
+		@on_success_step_id=0, 
+		@on_fail_action=2, 
+		@on_fail_step_id=0, 
+		@retry_attempts=0, 
+		@retry_interval=0, 
+		@os_run_priority=0, @subsystem=N'TSQL', 
+		@command=N'/*
+ Add extentions to database files where they are missing
+
+ Migrating to Cohesity revealed a very large number of database 
+ files where the extention is missing.  It is believed this
+ originates from the change in SQL Full Text Catalogs in SQL 2012.
+ There are also other files with this characteristic.  This 
+ isn''t a problem for SQL, rather, Cohesity is not able to 
+ de-duplicate/compress files without extentions.
+ Appending ".ndf", a secondary data file, will allow a significant 
+ reduction in storage.
+
+ This will run as a job every 4 hours until there are no databases to process
+
+ This script needs to be run on the SQL server as it needs access
+ to the local files to update the filename.  The process is:
+	1) Get all databases without Relativity users
+	2) Discover all database files without a "database file" extension
+	3) Create a cursor to loop through each database in question
+	4) Place database in SINGLE_USER mode
+		Take database offline
+		a) If database does not go OFFLINE, loop no more than 5 times, 
+	 	then report it and log to CommandLog table and move on
+	5) Execute DOS command shell to append ".ndf"
+	6) Bring database ONLINE
+	7) Modify database to recognize new file
+	8) Set database to MULTI_USER
+
+*/
+
+USE [master]
+GO
+DECLARE @Loop SMALLINT
+DECLARE @DBCount SMALLINT
+DECLARE @DOSCmd VARCHAR(200)
+DECLARE @DBName VARCHAR(200)
+DECLARE @LogicalName VARCHAR(200)
+DECLARE @FileName VARCHAR(200)
+DECLARE @PathName VARCHAR(200)
+DECLARE @PhysName VARCHAR(2000)
+DECLARE @Subj VARCHAR(100) 
+DECLARE @NewPhysName VARCHAR(2000)
+DECLARE @DBStat VARCHAR(10)
+DECLARE @SingMultCmd VARCHAR(8000)
+DECLARE @OffOnlineCmd VARCHAR(8000)
+DECLARE @RenameCmd VARCHAR(8000)
+DECLARE @HoldEm TABLE (DBName VARCHAR(200), LogicalName VARCHAR(200), PhysName VARCHAR(2000))
+DECLARE @DBs TABLE (DBName VARCHAR(200));
+DECLARE @Profs TABLE (ProfID TINYINT, Prof VARCHAR(50), Descr VARCHAR(50))
+DECLARE @ProfName VARCHAR(50)
+
+-- Not all instances have the CommandLog table
+BEGIN TRY
+	CREATE TABLE master.[dbo].[CommandLog](
+		[ID] [int] IDENTITY(1,1) NOT NULL,
+		[DatabaseName] [sysname] NULL,
+		[SchemaName] [sysname] NULL,
+		[ObjectName] [sysname] NULL,
+		[ObjectType] [char](2) NULL,
+		[IndexName] [sysname] NULL,
+		[IndexType] [tinyint] NULL,
+		[StatisticsName] [sysname] NULL,
+		[PartitionNumber] [int] NULL,
+		[ExtendedInfo] [xml] NULL,
+		[Command] [nvarchar](max) NOT NULL,
+		[CommandType] [nvarchar](60) NOT NULL,
+		[StartTime] [datetime] NOT NULL,
+		[EndTime] [datetime] NULL,
+		[ErrorNumber] [int] NULL,
+		[ErrorMessage] [nvarchar](max) NULL,
+	 CONSTRAINT [PK_CommandLog] PRIMARY KEY CLUSTERED 
+	(
+		[ID] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+END TRY
+
+BEGIN CATCH
+	Print ''*** CommandLog Present ***''
+END CATCH
+
+-- Get the mail profile name
+INSERT INTO @Profs
+EXEC msdb.dbo.sysmail_help_profile_sp @profile_id = 1
+
+SELECT @ProfName = Prof FROM @Profs WHERE ProfID = 1;
+
+-- Process only databases where users are not logged in through Relativity
+WITH UserDbStatus AS
+	(SELECT ec.ArtifactID, ec.DBLocation, UserCount = COUNT(*)
+	FROM Rel_Primary.EDDS.eddsdbo.UserStatus ustat
+	JOIN Rel_Primary.EDDS.eddsdbo.ExtendedCase ec ON ustat.CaseArtifactID = ec.ArtifactID
+	GROUP BY ec.ArtifactID,
+			 ec.DBLocation)
+
+ INSERT INTO @DBs
+	select name  from sys.sysdatabases where name not in(select ''EDDS'' + CAST(ArtifactID AS NVARCHAR(16)) from UserDbStatus )
+	 and name like ''EDDS[0-9]%''
+
+-- After looking at many files, this criteria proved sufficient.  We could use the file_id=2 for FullText, but I discovered this is not limited to just Relativity
+INSERT INTO @HoldEm
+SELECT DB_NAME(mf.database_id)
+	,mf.[name]
+    ,mf.[physical_name]
+FROM sys.master_files mf
+JOIN sys.databases d
+  ON mf.database_id = d.database_id AND d.[state] = 0
+JOIN @DBs db
+  ON d.[Name] = db.DBName
+WHERE RIGHT(RTRIM(mf.[physical_name]),3) NOT IN (''mdf'', ''ndf'', ''ldf'', ''snp'', ''dat'', ''dff'', ''nap'',''log'', ''.ss'', ''bak'')
+--	AND db.DBName IS NULL
+
+-- How many workspaces are to be updated
+SET @DBCount = @@ROWCOUNT
+PRINT @DBCount
+
+IF @DBCount > 0
+	BEGIN
+		-- Create cursor to iterate through the databases/files that need extentions added
+		DECLARE DB_Cursor CURSOR FOR
+			SELECT DBName
+				, LogicalName
+				, PhysName 
+			FROM @HoldEm
+
+		OPEN DB_Cursor
+
+		FETCH NEXT FROM DB_Cursor INTO @DBName, @LogicalName, @PhysName
+		WHILE @@FETCH_STATUS = 0  
+			BEGIN  
+				SET @OffOnlineCmd = ''ALTER DATABASE ['' + @DBName + ''] SET OFFLINE WITH ROLLBACK IMMEDIATE''
+				EXECUTE (@OffOnlineCmd)
+				print @OffOnlineCmd
+				SELECT @DBStat = State_desc FROM sys.databases WHERE DB_NAME(database_id) = @DBName
+				SET @Loop = 0
+				-- If the database isn''t offline
+				WHILE @DBStat <> ''OFFLINE'' AND @Loop < 5
+					BEGIN
+						WAITFOR DELAY ''000:00:02''
+						SET @Loop = @Loop + 1
+						EXECUTE (@OffOnlineCmd)
+						WAITFOR DELAY ''000:00:02''
+						SELECT @DBStat = State_desc FROM sys.databases WHERE DB_NAME(database_id) = @DBName
+					END
+				IF @DBStat <> ''OFFLINE''
+					BEGIN
+						-- Record issue in the CommandLog table and return back to the beginning with the next file to rename
+						INSERT INTO master.dbo.CommandLog([DatabaseName], [Command], [StartTime], [EndTime], [CommandType], [ErrorNumber], [ErrorMessage])
+						VALUES (@DBName, @LogicalName + '' / '' + @PhysName, GETDATE(), GETDATE(), ''File Extension Append'', -1, ''Cannot offline DB'')
+
+						-- Gets next record in cursor
+						FETCH NEXT FROM DB_Cursor INTO @DBName, @LogicalName, @PhysName
+						-- Exits this iteration of the cursor
+						CONTINUE
+					END
+
+				SELECT @FileName = RIGHT(@PhysName, CHARINDEX(''\'',REVERSE(@PhysName))-1)
+				SELECT @PathName = LEFT (@PhysName, LEN(@PhysName) - CHARINDEX(''\'',REVERSE(@PhysName))+1)
+
+				SET @FileName = @FileName + ''.ndf''
+				SET @NewPhysName = @PathName + @FileName
+				SET @DOSCmd = ''rename "'' + @PhysName + ''" "'' + @FileName + ''"''
+		
+				-- Rename the file.
+				BEGIN TRY
+					EXECUTE xp_cmdshell @DOSCmd
+				END TRY
+				BEGIN CATCH
+					-- Record issue in the CommandLog table, set the database back to being ONLINE and MULTI_USER and return back to the beginning with the next file to rename
+					INSERT INTO master.dbo.CommandLog([DatabaseName], [Command], [StartTime], [EndTime], [CommandType], [ErrorNumber], [ErrorMessage])
+					VALUES (@DBName, @LogicalName + '' / '' + @PhysName, GETDATE(), GETDATE(), ''File Extension Append'', ERROR_NUMBER(), ''!!! RENAME FAILED !!'')
+
+					SET @OffOnlineCmd = ''ALTER DATABASE ['' + @DBName + ''] SET ONLINE''
+					EXECUTE (@OffOnlineCmd)
+
+					-- Get next record in cursor
+					FETCH NEXT FROM DB_Cursor INTO @DBName, @LogicalName, @PhysName
+					-- Exits this iteration of the cursor
+					CONTINUE
+				END CATCH
+
+				
+				SET @RenameCmd = ''ALTER DATABASE ['' + @DBName + ''] MODIFY FILE (Name='''''' + @LogicalName + '''''', FILENAME='''''' + @NewPhysName + '''''')''
+				EXECUTE (@RenameCmd)
+
+				-- File has been renamed, so, time to bring the database back ONLINE
+				SET @OffOnlineCmd = ''ALTER DATABASE ['' + @DBName + ''] SET ONLINE''
+				BEGIN TRY
+					EXECUTE (@OffOnlineCmd)
+				END TRY
+				BEGIN CATCH
+					INSERT INTO master.dbo.CommandLog([DatabaseName], [Command], [StartTime], [EndTime], [CommandType], [ErrorNumber], [ErrorMessage])
+					VALUES (@DBName, @LogicalName + '' / '' + @PhysName, GETDATE(), GETDATE(),''File Extension Append'', -1, ''Cannot ONLINE DB'')
+					
+					SET @Subj = ''** ALERT! File Extension Append ISSUE - '' + @@SERVERNAME + '' - '' + @DBName + '' OFFLINE'' 
+					EXEC msdb.dbo.sp_send_dbmail  
+							@profile_name = @ProfName,  
+							@recipients = ''IT-DBA@epiqglobal.com'',  
+							@query = ''SELECT @@SERVERNAME, DatabaseName, StartTime, ErrorNumber, ErrorMessage FROM master.dbo.CommandLog WHERE [CommandType] = ''''File Extension Append'''''' ,  
+							@subject = @Subj,
+							@importance = ''High'';  
+				END CATCH
+					
+				-- Get next record in cursor
+				FETCH NEXT FROM DB_Cursor INTO @DBName, @LogicalName, @PhysName
+			END
+
+		CLOSE DB_Cursor;
+		DEALLOCATE DB_Cursor;
+
+
+-- If any entries were made in the CommandLog table, send an email about it
+	IF EXISTS (SELECT * FROM master.dbo.CommandLog WHERE [CommandType] = ''File Extension Append'')
+		BEGIN
+			EXEC msdb.dbo.sp_send_dbmail  
+				@profile_name = @ProfName,  
+				@recipients = ''IT-DBA@epiqglobal.com'',  
+				@query = ''SELECT @@SERVERNAME, DatabaseName, StartTime, ErrorNumber, ErrorMessage FROM master.dbo.CommandLog WHERE [CommandType] = ''''File Extension Append'''''' ,  
+				@subject = ''File Extension Append ISSUE'',  
+				@importance = ''High'';  
+		END
+	END
+', 
+		@database_name=N'master', 
+		@flags=0
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+EXEC @ReturnCode = msdb.dbo.sp_update_job @job_id = @jobId, @start_step_id = 1
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+EXEC @ReturnCode = msdb.dbo.sp_add_jobschedule @job_id=@jobId, @name=N'Every4', 
+		@enabled=1, 
+		@freq_type=4, 
+		@freq_interval=1, 
+		@freq_subday_type=8, 
+		@freq_subday_interval=4, 
+		@freq_relative_interval=0, 
+		@freq_recurrence_factor=0, 
+		@active_start_date=20221102, 
+		@active_end_date=99991231, 
+		@active_start_time=10000, 
+		@active_end_time=235959, 
+		@schedule_uid=N'11a457e9-8cfc-4f8a-903f-3e86e10fb20b'
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+EXEC @ReturnCode = msdb.dbo.sp_add_jobserver @job_id = @jobId, @server_name = N'(local)'
+IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
+COMMIT TRANSACTION
+GOTO EndSave
+QuitWithRollback:
+    IF (@@TRANCOUNT > 0) ROLLBACK TRANSACTION
+EndSave:
+GO
+
+

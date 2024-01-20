@@ -1,0 +1,9 @@
+EXEC msdb.dbo.sp_add_alert @Name=N'Severity 17',
+@message_id=0,
+@severity=17,
+@enabled=1,
+@delay_between_responses=60,
+@include_event_description_in=1,
+@job_id=N'00000000-0000-0000-0000-000000000000';
+EXEC msdb.dbo.sp_add_notification @alert_name=N'Severity 17', @operator_name='SQLSupport', @notification_method = 7;
+

@@ -1,0 +1,52 @@
+IF (OBJECT_ID('[dbo].[trgCMS_tracker_master]') IS NOT NULL) DROP TRIGGER [dbo].[trgCMS_tracker_master]
+GO
+CREATE TRIGGER [dbo].[trgCMS_tracker_master] ON [dbo].[CMS_Tracker_master]
+FOR INSERT, UPDATE, DELETE AS 
+BEGIN 
+Declare @User nvarchar (100), @Ins nvarchar(max), @Upd nvarchar(max), @Del nvarchar(max)
+set @User= SUSER_NAME() 
+Set @Ins =  @User + ' - Inserting the data on the CMS_Tracker_master table';
+Set @Upd =  @User + ' - Updating the data on the CMS_Tracker_master table';
+Set @Del =  @User + ' - Deleting the data on the CMS_Tracker_master table';
+
+    IF EXISTS (SELECT * FROM inserted) AND NOT EXISTS (SELECT * FROM deleted) and @User <> 'EPIQCORP\svc_P054SQLMGMT3a'
+    BEGIN 
+        ROLLBACK TRANSACTION; 
+        RAISERROR ('Permissions denied for the user to insert data on table "CMS_Tracker_master"', 15, 1); 
+		EXEC msdb.dbo.sp_send_dbmail 
+			@profile_name = 'Administrator', 
+			@recipients = 'DL-SQLDatabaseSupportL1@epiqglobal.com;Senthil.Raghavan@epiqglobal.com', 
+			@body = @Ins,
+			@subject = 'SQL Inventory table update Alert!'; 
+        RETURN;
+    END 
+  
+  
+    IF EXISTS (SELECT * FROM deleted) AND NOT EXISTS (SELECT * FROM inserted) and @User <> 'EPIQCORP\svc_P054SQLMGMT3a'
+    BEGIN 
+        ROLLBACK TRANSACTION; 
+        RAISERROR ('Permissions denied for the user to delete data on table "CMS_Tracker_master"', 15, 1); 
+		EXEC msdb.dbo.sp_send_dbmail 
+			@profile_name = 'Administrator', 
+			@recipients = 'DL-SQLDatabaseSupportL1@epiqglobal.com;Senthil.Raghavan@epiqglobal.com', 
+			@body = @Del,
+			@subject = 'SQL Inventory table update Alert!'; 
+        RETURN;
+    END 
+  
+  
+    IF EXISTS (SELECT * FROM inserted) AND EXISTS (SELECT * FROM deleted) 
+    BEGIN 
+        ROLLBACK TRANSACTION; 
+        RAISERROR ('Permissions denied for the user to Update data on "CMS_Tracker_master"', 15, 1); 
+		EXEC msdb.dbo.sp_send_dbmail 
+			@profile_name = 'Administrator', 
+			@recipients = 'DL-SQLDatabaseSupportL1@epiqglobal.com;Senthil.Raghavan@epiqglobal.com',   
+			@body = @Upd, 
+			@subject = 'SQL Inventory table update Alert!'; 
+        RETURN;
+    END 
+  
+END; 
+GO
+

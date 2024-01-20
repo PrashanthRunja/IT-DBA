@@ -1,0 +1,34 @@
+Issues with DBCC:
+
+#1
+Server:P062UTLSQLS01.apcust.local\UTIL01
+output                                                                                                                                                                                                                                                         
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sqlcmd: Error: Microsoft ODBC Driver 17 for SQL Server : Named Pipes Provider: Could not open a connection to SQL Server [53]. .
+Sqlcmd: Error: Microsoft ODBC Driver 17 for SQL Server : Login timeout expired.
+Sqlcmd: Error: Microsoft ODBC Driver 17 for SQL Server : A network-related or instance-specific error has occurred while establishing a connection to SQL Server. Server is not found or not accessible. Check if instance name is correct and if SQL Server is
+ configured to allow remote connections. For more information see SQL Server Books Online..
+(null)
+
+
+#2
+Server:GFRGNCSQL1.settlementplan.local
+Could not allocate space for object 'dbo.SORT temporary run storage:  151128680693760' in database 'tempdb' because the 'PRIMARY' filegroup is full. Create disk space by deleting unneeded files, dropping objects in the filegroup, adding additional files to the filegroup, or setting autogrowth on for existing files in the filegroup
+ 
+#3
+Server:P054BSFSQLH01.amer.epiqcorp.com
+The problem is with the @@SERVERNAME parameter in the code where it shows IDSRDPSQL2 as server name instead of IDSRDPSQL02.
+
+#4
+Server:P082RL1GSQL02\DIST02  DBCC Pickup job schedule issue
+Issue with SQL agent not picking any job on schedule.
+
+#5
+Server:P082ESCAPPS01.cacust.local\STATCOLLECTOR
+some part of code is being truncated during the execution of @CMD parameter having a limitation for the datatype. The EXECUTE XP_CMDSHELL  @CMD at the bottom of the script, does not accept for the characters that are of length greater than 8000 bytes
+
+#6
+server:D064CMXSQLA01.eucust.local\ECADA01
+Server running old Stored Proc. The new parameters having @Delim parameter at the end.   
+ 
+ 

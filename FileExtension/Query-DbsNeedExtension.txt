@@ -1,0 +1,65 @@
+--Query to find how many files needs extension 
+SELECT 
+@@SERVERNAME as SQLInstance, DB.NAME AS DatabaseName,db.create_date as DateCreated, TYPE_DESC AS FileType, PHYSICAL_NAME AS FileName
+FROM SYS.MASTER_FILES MF
+INNER JOIN SYS.DATABASES DB ON DB.DATABASE_ID = MF.DATABASE_ID
+where PHYSICAL_NAME not like '%.MDF' and PHYSICAL_NAME not like '%.LDF' and PHYSICAL_NAME not like '%.NDF'
+ORDER BY DatabaseName
+
+--Job status
+SELECT @@servername, [name] as 'job name', [enabled] as 'enabled'
+FROM msdb.dbo.sysjobs
+where name='DBA - File Extension Fix'
+
+--Run below queries on MGMT03
+
+--New Queries
+--Summary
+select distinct a.ConnectedServer,a.DataCenter,a.CollectedDate,COUNT(a.physical_name) As DBsNeedsExtn 
+from [DBASupport].[DW].[ReportDBFiles] a
+inner join [DBASupport].[dbo].cms_tracker_master b
+on a.ConnectedServer=b.instance
+--where  a.ConnectedServer like 'P054%'
+and a.data_space_id = 2
+       AND physical_name NOT LIKE '%.ndf' 
+       AND physical_name NOT LIKE '%.mdf'
+--and collecteddate > GETDATE() - 1
+group by a.ConnectedServer,a.DataCenter,a.CollectedDate
+ order by a.CollectedDate, a.DataCenter,a.ConnectedServer
+
+--Details
+select a.DataCenter,a.ConnectedServer,physical_name,a.CollectedDate,LastUpdated 
+from [DBASupport].[DW].[ReportDBFiles] a
+inner join [DBASupport].[dbo].cms_tracker_master b
+on a.ConnectedServer=b.instance
+--where  a.ConnectedServer like 'P054%'
+and a.data_space_id = 2
+       AND physical_name NOT LIKE '%.ndf' 
+       AND physical_name NOT LIKE '%.mdf'
+--and collecteddate > GETDATE() - 1
+--group by a.ConnectedServer,a.DataCenter,a.CollectedDate
+ order by a.CollectedDate, a.DataCenter,a.ConnectedServer
+
+--Davis query
+SELECT f.datacenter
+       ,f.connectedserver
+       ,f.collecteddate
+       ,physical_name
+FROM [DBASupport].[DW].[ReportDBFiles] f
+WHERE  physical_name NOT LIKE '%.ndf' 
+       AND physical_name NOT LIKE '%.mdf'
+       AND physical_name NOT LIKE '%.ldf'
+       AND physical_name NOT LIKE '%.snp'
+       AND physical_name NOT LIKE '%.snap'
+       AND physical_name NOT LIKE '%.bak'
+and f.collecteddate > dateadd(day,-7,getdate())
+order by f.datacenter,f.connectedserver
+
+---New Table [SQLDBFileExtension_master] Query
+use DBASupport
+SELECT A.*,B.statedesc As DBStatus FROM [DBASupport].[dbo].[SQLDBFileExtension_master] A		
+left join  databasesettings_master B
+on A.sqlinstance=B.sqlinstance and A.databasename=B.databasename
+where A.databasename not like '%Snap%' and B.statedesc in ('ONLINE') and A.datacenter not in ('DQS')
+--and B.statedesc not in  ('RESTORING')
+order by A.datacenter,A.sqlinstance,A.databasename

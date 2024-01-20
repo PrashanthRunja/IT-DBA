@@ -1,0 +1,56 @@
+--All Dbs segregated by size group by DC
+use DBASupport
+SELECT Datacenter,
+    COUNT(databaseGB) As TotalCount,
+    COUNT(CASE WHEN databaseGB >2048 THEN databaseGB
+            ELSE NULL END) AS [>2TB],
+    COUNT(CASE WHEN databaseGB <2048  THEN databaseGB
+            ELSE NULL END) AS [<2TB]
+FROM  databasesettings_master
+where Datacenter in ('LVDC','LVDC-EMS','TUDC') and databasename not in ('tempdb')
+GROUP BY Datacenter
+order by Datacenter
+
+use DBASupport
+--DBS greater than 2TB group by datacenter
+select datacenter,count (databaseGB) As 'DB>2TB' from databasesettings_master
+where 
+databaseGB >2048 and 
+datacenter in ('LVDC','LVDC-EMS','TUDC') and databasename not in ('tempdb')
+group by datacenter
+order by datacenter
+
+----------------------------------
+--All Dbs segregated by size group by DC,SQLInstance
+use DBASupport
+select datacenter,SQlinstance,    
+COUNT(databaseGB) As TotalCount,
+COUNT(CASE WHEN databaseGB >2048 THEN databaseGB
+            ELSE NULL END) AS [>2TB],
+COUNT(CASE WHEN databaseGB <2048  THEN databaseGB
+            ELSE NULL END) AS [<2TB] from databasesettings_master
+where 
+datacenter in ('LVDC','LVDC-EMS','TUDC') and databasename not in ('tempdb')
+group by datacenter,SQlinstance
+order by datacenter,SQlinstance
+
+
+--DBS greater than 2TB group by serverName
+select datacenter,SQlinstance,count (databaseGB) As 'DB>2TB' from databasesettings_master
+where 
+databaseGB >2048 and 
+datacenter in ('LVDC','LVDC-EMS','TUDC') and databasename not in ('tempdb')
+group by datacenter,SQlinstance
+order by datacenter,SQlinstance
+
+
+--Select 2TB details
+select datacenter,SQlinstance,DatabaseName,databaseGB,DateCreated,LastGoodCheckDb,DaysSinceLastGoodCheckDb,LastUpdated from databasesettings_master
+where 
+databaseGB >2048 and 
+datacenter in ('LVDC','LVDC-EMS','TUDC') and databasename not in ('tempdb')
+order by datacenter,SQlinstance
+
+
+
+
