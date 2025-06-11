@@ -1,0 +1,41 @@
+{
+	"name": "SqlServerTable2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Mgmt03",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "employee_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "employee_salary",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "employee_age",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "profile_image",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "UsersTable"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

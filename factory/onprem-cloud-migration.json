@@ -1,0 +1,15 @@
+{
+	"name": "onprem-cloud-migration",
+	"properties": {
+		"globalConfigurations": {
+			"factoryStagingLSReferenceName": "AzureBlobStorage1",
+			"factoryStagingLSType": "LinkedServiceReference"
+		}
+	},
+	"location": "southindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "dda7c2f4-a22a-4be3-a481-522b492a6d78",
+		"tenantId": "68e37541-520e-47cd-b1d2-e14be4a7d54d"
+	}
+}
