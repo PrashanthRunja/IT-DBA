@@ -1,0 +1,12 @@
+{
+	"name": "DBASupport",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DBASupport",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}
