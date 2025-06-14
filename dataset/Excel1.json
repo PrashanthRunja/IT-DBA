@@ -14,7 +14,7 @@
 				"fileName": "SQLInventory_01.xlsx",
 				"container": "target"
 			},
-			"firstRowAsHeader": true
+			"firstRowAsHeader": false
 		},
 		"schema": [
 			{
