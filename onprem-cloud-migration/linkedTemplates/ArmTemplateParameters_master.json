@@ -1,0 +1,60 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "onprem-cloud-migration"
+		},
+		"AzureBlobStorage1_connectionString": {
+			"value": ""
+		},
+		"AzureSqlDatabase1_password": {
+			"value": ""
+		},
+		"Mgmt03_password": {
+			"value": ""
+		},
+		"SqlServer1_password": {
+			"value": ""
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://kv-rpk.vault.azure.net/"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"value": "sqlserver-rpk.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"value": "DBASupport"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"value": "SQLDBA"
+		},
+		"Mgmt03_properties_typeProperties_server": {
+			"value": "P054SQLMGMT03.EPIQCORP.COM\\SQLADMIN"
+		},
+		"Mgmt03_properties_typeProperties_database": {
+			"value": "DC_Test"
+		},
+		"Mgmt03_properties_typeProperties_userName": {
+			"value": "SQLDBA"
+		},
+		"RestService1_properties_typeProperties_url": {
+			"value": "https://dummy.restapiexample.com/api/v1/employees"
+		},
+		"SqlServer1_properties_typeProperties_server": {
+			"value": "P054SQLMGMT03.Epiqcorp.com\\SQLADMIN"
+		},
+		"SqlServer1_properties_typeProperties_database": {
+			"value": "DC_Test"
+		},
+		"SqlServer1_properties_typeProperties_userName": {
+			"value": "SQLDBA"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
