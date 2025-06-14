@@ -11,6 +11,9 @@
 		"AzureSqlDatabase1_password": {
 			"value": ""
 		},
+		"DBASupport_password": {
+			"value": ""
+		},
 		"Mgmt03_password": {
 			"value": ""
 		},
@@ -27,6 +30,15 @@
 			"value": "DBASupport"
 		},
 		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"value": "SQLDBA"
+		},
+		"DBASupport_properties_typeProperties_server": {
+			"value": "sqlserver-rpk.database.windows.net"
+		},
+		"DBASupport_properties_typeProperties_database": {
+			"value": "DBASupport"
+		},
+		"DBASupport_properties_typeProperties_userName": {
 			"value": "SQLDBA"
 		},
 		"Mgmt03_properties_typeProperties_server": {

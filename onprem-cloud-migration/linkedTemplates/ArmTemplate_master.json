@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'AzureSqlDatabase1'"
 		},
+		"DBASupport_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'DBASupport'"
+		},
 		"Mgmt03_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Mgmt03'"
@@ -36,6 +40,18 @@
 			"defaultValue": "DBASupport"
 		},
 		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "SQLDBA"
+		},
+		"DBASupport_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlserver-rpk.database.windows.net"
+		},
+		"DBASupport_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "DBASupport"
+		},
+		"DBASupport_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "SQLDBA"
 		},
@@ -100,6 +116,9 @@
 					"AzureSqlDatabase1_password": {
 						"value": "[parameters('AzureSqlDatabase1_password')]"
 					},
+					"DBASupport_password": {
+						"value": "[parameters('DBASupport_password')]"
+					},
 					"Mgmt03_password": {
 						"value": "[parameters('Mgmt03_password')]"
 					},
@@ -117,6 +136,15 @@
 					},
 					"AzureSqlDatabase1_properties_typeProperties_userName": {
 						"value": "[parameters('AzureSqlDatabase1_properties_typeProperties_userName')]"
+					},
+					"DBASupport_properties_typeProperties_server": {
+						"value": "[parameters('DBASupport_properties_typeProperties_server')]"
+					},
+					"DBASupport_properties_typeProperties_database": {
+						"value": "[parameters('DBASupport_properties_typeProperties_database')]"
+					},
+					"DBASupport_properties_typeProperties_userName": {
+						"value": "[parameters('DBASupport_properties_typeProperties_userName')]"
 					},
 					"RestService1_properties_typeProperties_url": {
 						"value": "[parameters('RestService1_properties_typeProperties_url')]"
